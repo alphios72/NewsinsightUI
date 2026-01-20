@@ -63,8 +63,8 @@ COPY --from=builder /app/data.xlsx ./data.xlsx
 COPY check-users.js ./check-users.js
 
 
-# Install bcryptjs for seed script
-RUN npm install bcryptjs
+# Install bcryptjs for seed script (already in standalone, skipping explicit install to avoid freeze)
+# RUN npm install bcryptjs
 
 USER nextjs
 
