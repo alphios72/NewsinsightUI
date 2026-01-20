@@ -29,11 +29,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert owner to lowercase
+        id: lowercase
+        run: |
+          echo "owner=${OWNER,,}" >>${GITHUB_OUTPUT}
+        env:
+          OWNER: '${{ github.repository_owner }}'
+
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/newsinsightui
+          images: ghcr.io/${{ steps.lowercase.outputs.owner }}/newsinsightui
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -48,3 +55,5 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
