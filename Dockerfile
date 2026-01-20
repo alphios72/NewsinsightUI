@@ -58,9 +58,11 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/data.xlsx ./data.xlsx
 
 # Install bcryptjs for seed script
-# RUN npm install bcryptjs
+RUN npm install bcryptjs
 
 USER nextjs
 
