@@ -39,7 +39,8 @@ export async function login(formData: FormData) {
         const cookieStore = await cookies()
         cookieStore.set('session', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            // Only set secure if in production AND using HTTPS
+            secure: process.env.NODE_ENV === 'production' && process.env.NEXTAUTH_URL?.startsWith('https://'),
             maxAge: 60 * 60 * 24, // 24 hours
             path: '/',
         })
