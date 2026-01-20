@@ -18,7 +18,9 @@
     "next": "16.1.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "recharts": "^2.10.3",
+    "react-tagcloud": "^2.3.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

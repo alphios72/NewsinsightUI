@@ -1,0 +1,52 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.statCard {
+    text-align: center;
+}
+
+.statValue {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 1rem 0;
+}
+
+.statLabel {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+.chartContainer {
+    height: 300px;
+    width: 100%;
+}
+
+.wordCloudContainer {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}

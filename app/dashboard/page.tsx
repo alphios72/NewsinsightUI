@@ -1,11 +1,19 @@
-export default function DashboardPage() {
+import { getDashboardStats } from './actions'
+import OverviewCharts from './OverviewCharts'
+
+export default async function DashboardPage() {
+    const stats = await getDashboardStats()
+
     return (
         <div>
             <h1 className="title">Dashboard</h1>
             <p className="subtitle">Welcome to NewsInsight AI Administration.</p>
-            <div className="card">
-                <p>Select a table from the sidebar to view or edit data.</p>
-            </div>
+
+            <OverviewCharts
+                articleCount={stats.articleCount}
+                sources={stats.sources}
+                wordCloudData={stats.wordCloudData}
+            />
 
             <style>{`
         .title {
@@ -16,12 +24,6 @@ export default function DashboardPage() {
         .subtitle {
             color: #64748b;
             margin-bottom: 2rem;
-        }
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
       `}</style>
         </div>
