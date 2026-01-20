@@ -37,7 +37,7 @@ model TablePermission {
 // Business Tables (from Diagram)
 
 model RssFeedUrl {
-  id           Int     @id @default(autoincrement())
+  id           Int     @id @default(autoincrement()) @map("ID")
   website      String?
   rss_feed_url String? // "rss_feed_url" in image
 
@@ -54,7 +54,7 @@ model DbBurc {
 }
 
 model RelevantOrNot {
-  id          Int     @id @default(autoincrement())
+  id          Int     @id @default(autoincrement()) @map("ID")
   category    String?
   description String?
   relevant    Int? // 123 icon in image
@@ -63,7 +63,7 @@ model RelevantOrNot {
 }
 
 model Logs {
-  id          Int       @id @default(autoincrement())
+  id          Int       @id @default(autoincrement()) @map("ID")
   timestamp   DateTime?
   level_error String?   @map("level error")
   node        String?
@@ -74,7 +74,7 @@ model Logs {
 }
 
 model FontiEuropee {
-  id            Int     @id @default(autoincrement())
+  id            Int     @id @default(autoincrement()) @map("ID")
   website       String?
   url           String?
   domain        String?
@@ -86,7 +86,7 @@ model FontiEuropee {
 }
 
 model RssDb {
-  id           Int       @id @default(autoincrement())
+  id           Int       @id @default(autoincrement()) @map("ID")
   article_url  String?
   summarized   String?
   summary      String?
@@ -98,7 +98,7 @@ model RssDb {
 }
 
 model RssEuropee {
-  id            Int     @id @default(autoincrement())
+  id            Int     @id @default(autoincrement()) @map("ID")
   website       String?
   url           String?
   domain        String?
@@ -136,7 +136,7 @@ model Burc {
 }
 
 model DbEuropee {
-  id                 Int       @id @default(autoincrement())
+  id                 Int       @id @default(autoincrement()) @map("ID")
   article_url        String?
   summarized         Boolean? // Checkbox icon
   summary            String?
@@ -150,10 +150,10 @@ model DbEuropee {
 }
 
 model Url {
-  id                        Int     @id @default(autoincrement())
+  id                        Int     @id @default(autoincrement()) @map("ID")
   website                   String?
   url                       String?
-  fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scrivilo sotto)")
+  fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scriverlo sotto)")
   domain                    String?
   css_selector              String? @map("CSS_selector")
   return_value              String?
