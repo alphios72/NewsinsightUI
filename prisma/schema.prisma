@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// System Tables
+
+enum Role {
+  ADMIN
+  CONFIGURATOR
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      Role     @default(CONFIGURATOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TablePermission {
+  id        Int      @id @default(autoincrement())
+  role      Role
+  tableName String
+  canView   Boolean  @default(false)
+  canEdit   Boolean  @default(false)
+
+  @@unique([role, tableName])
+}
+
+// Business Tables (from Diagram)
+
+model RssFeedUrl {
+  id           Int     @id @default(autoincrement())
+  website      String?
+  rss_feed_url String? // "rss_feed_url" in image
+
+  @@map("rss_feed_url")
+}
+
+model DbBurc {
+  id          Int       @id @default(autoincrement())
+  article_url String?
+  fetched_at  DateTime?
+  stato       String?
+
+  @@map("db_burc")
+}
+
+model RelevantOrNot {
+  id          Int     @id @default(autoincrement())
+  category    String?
+  description String?
+  relevant    Int? // 123 icon in image
+
+  @@map("relevant_or_not")
+}
+
+model Logs {
+  id          Int       @id @default(autoincrement())
+  timestamp   DateTime?
+  level_error String?   @map("level error")
+  node        String?
+  url         String?
+  message     String?
+
+  @@map("logs")
+}
+
+model FontiEuropee {
+  id            Int     @id @default(autoincrement())
+  website       String?
+  url           String?
+  domain        String?
+  css_selector  String? @map("CSS_selector")
+  return_value  String?
+  attribute     String?
+
+  @@map("fonti_europee")
+}
+
+model RssDb {
+  id           Int       @id @default(autoincrement())
+  article_url  String?
+  summarized   String?
+  summary      String?
+  website      String?
+  fetched_at   DateTime?
+  publish_date DateTime?
+
+  @@map("rss_db")
+}
+
+model RssEuropee {
+  id            Int     @id @default(autoincrement())
+  website       String?
+  url           String?
+  domain        String?
+  css_selector  String? @map("CSS_selector")
+  return_value  String?
+  attribute     String?
+
+  @@map("rss_europee")
+}
+
+model ArticleDb {
+  id                 Int       @id @default(autoincrement())
+  article_url        String?
+  summarized         String?
+  summary            String?
+  fetched_at         DateTime?
+  title              String?
+  motivazione_e_tema String?   @map("motivazione e tema")
+  tema_trattato      String?   @map("tema trattato")
+
+  @@map("article_db")
+}
+
+model Burc {
+  id                        Int     @id @default(autoincrement())
+  website                   String?
+  url                       String?
+  fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scrivilo sotto)")
+  domain                    String?
+  css_selector              String?
+  return_value              String?
+  attribute                 String?
+
+  @@map("burc")
+}
+
+model DbEuropee {
+  id                 Int       @id @default(autoincrement())
+  article_url        String?
+  summarized         Boolean? // Checkbox icon
+  summary            String?
+  fetched_at         DateTime?
+  title              String?
+  motivazione_e_tema String?   @map("motivazione e tema")
+  indice_attinenza   Int?      @map("indice attinenza")
+  tema_trattato      String?   @map("tema trattato")
+
+  @@map("db_europee")
+}
+
+model Url {
+  id                        Int     @id @default(autoincrement())
+  website                   String?
+  url                       String?
+  fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scrivilo sotto)")
+  domain                    String?
+  css_selector              String? @map("CSS_selector")
+  return_value              String?
+  attribute                 String?
+  note                      String?
+
+  @@map("url")
+}

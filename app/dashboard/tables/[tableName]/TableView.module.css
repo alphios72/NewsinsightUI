@@ -1,0 +1,286 @@
+.tableContainer {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.resultCount {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+    flex: 1;
+}
+
+.table {
+    border-collapse: separate;
+    /* Allows border styling flexibility if needed, or stick to collapse */
+    border-spacing: 0;
+    width: 100%;
+    min-width: 800px;
+}
+
+.th {
+    background: #f8fafc;
+    font-weight: 700;
+    /* Bold */
+    color: #1e293b;
+    /* Darker text */
+    white-space: nowrap;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #cbd5e1;
+    /* Stronger bottom border */
+    border-right: 1px solid #e2e8f0;
+    /* Vertical separator */
+    text-align: left;
+    font-size: 0.875rem;
+    position: relative;
+    user-select: none;
+}
+
+.th:last-child {
+    border-right: none;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.headerContent:hover {
+    color: #1e293b;
+}
+
+.filterIcon {
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.filterIcon:hover,
+.filterIcon.active {
+    opacity: 1;
+    background: #e2e8f0;
+}
+
+.td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    /* Vertical separator */
+    text-align: left;
+    font-size: 0.875rem;
+    vertical-align: top;
+}
+
+.td:last-child {
+    border-right: none;
+}
+
+.row:hover {
+    background: #f1f5f9;
+}
+
+.row.editing {
+    background: #eff6ff;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.pageControls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pageBtn {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.pageBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageBtn:not(:disabled):hover {
+    background: #f1f5f9;
+}
+
+/* Popover / Dropdown */
+.popover {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 50;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 280px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.popoverContent {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 400px;
+}
+
+.sortButtons {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.sortBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.sortBtn:hover {
+    background: #f8fafc;
+}
+
+.searchBox {
+    padding: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.valuesList {
+    overflow-y: auto;
+    max-height: 200px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 0.25rem;
+}
+
+.valueItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    user-select: none;
+}
+
+.valueItem:hover {
+    background: #f1f5f9;
+}
+
+.popoverActions {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.actionLink {
+    color: #2563eb;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.actionLink:hover {
+    text-decoration: underline;
+}
+
+.cellValue {
+    display: block;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.input {
+    width: 100%;
+    padding: 0.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+}
+
+.btnGroup {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.saveBtn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.cancelBtn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.editBtn {
+    background: #e2e8f0;
+    border: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #334155;
+}
