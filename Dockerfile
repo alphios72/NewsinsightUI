@@ -60,6 +60,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/data.xlsx ./data.xlsx
+COPY check-users.js ./check-users.js
+
 
 # Install bcryptjs for seed script
 RUN npm install bcryptjs
