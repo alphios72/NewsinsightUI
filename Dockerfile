@@ -44,8 +44,8 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install OpenSSL for Prisma
-RUN apk add --no-cache openssl libc6-compat
+# Install OpenSSL and Bash for compatibility
+RUN apk add --no-cache openssl libc6-compat bash
 
 COPY --from=builder /app/public ./public
 
