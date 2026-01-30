@@ -1,8 +1,7 @@
 import { prisma } from '@/lib/prisma'
-import { ALL_TABLES } from '@/lib/tables'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import TableView from './table-view'
+import { getDatabaseTables, getTableData, getTableColumns } from '@/lib/db-utils'
 
 // Force dynamic rendering as we rely on headers involved in auth/permissions that might change
 export const dynamic = 'force-dynamic'
@@ -10,9 +9,10 @@ export const dynamic = 'force-dynamic'
 export default async function TablePage({ params }: { params: Promise<{ tableName: string }> }) {
     const resolvedParams = await params
     const { tableName } = resolvedParams
-    const tableConfig = ALL_TABLES.find((t) => t.name === tableName)
 
-    if (!tableConfig) {
+    // Validate table existence
+    const validTables = await getDatabaseTables()
+    if (!validTables.includes(tableName)) {
         return <div>Table not found</div>
     }
 
@@ -24,7 +24,7 @@ export default async function TablePage({ params }: { params: Promise<{ tableNam
 
     if (role === 'ADMIN') {
         canView = true
-        canEdit = true // Admin can roughly do everything, though explicit perms could restrict if desired. Assuming full access.
+        canEdit = true
     } else {
         // Check DB
         const perm = await prisma.tablePermission.findUnique({
@@ -48,34 +48,27 @@ export default async function TablePage({ params }: { params: Promise<{ tableNam
         )
     }
 
-    // Fetch data
-    const model = (prisma as any)[tableConfig.model]
-    // Fetch only first 100 or so for simplicity, pagination ideally needed
-    const data = await model.findMany({
-        take: 5000,
-        orderBy: { id: 'desc' },
-    })
+    // Fetch data dynamically
+    const data = await getTableData(tableName, 5000) as any[]
 
-    // Determine columns from first row if exists, or nothing... 
-    // Ideally introspection or schema awareness, but we can infer from data[0] if present
-    // If no data, we can't show columns easily without more schema info.
-    // We can hardcode columns? Or assume data exists?
-    // User "Seeded DB" -> Maybe empty. 
-    // Let's assume keys from data[0] if exists. If not, showing "No data" is fine.
+    // Fetch columns dynamically
+    const columns = await getTableColumns(tableName)
 
     return (
         <div>
-            <h1 className="title">{tableConfig.label}</h1>
+            <h1 className="title">{tableName}</h1>
             <TableView
                 tableName={tableName}
                 initialData={data}
                 canEdit={canEdit}
+                columns={columns}
             />
             <style>{`
         .title {
             font-size: 1.5rem;
             color: #1e293b;
             margin-bottom: 2rem;
+            text-transform: capitalize;
         }
         .error-container {
             text-align: center;

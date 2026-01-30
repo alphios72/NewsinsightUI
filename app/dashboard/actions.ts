@@ -17,18 +17,17 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     const articleCount = await prisma.articleDb.count()
 
     // 2. Sources Count
-    const [rssFeedCount, urlCount, fontiEuropeeCount, rssEuropeeCount] = await Promise.all([
-        prisma.rssFeedUrl.count(),
+    // 2. Sources Count
+    const [urlCount, monitorCount, burcCount] = await Promise.all([
         prisma.url.count(),
-        prisma.fontiEuropee.count(),
-        prisma.rssEuropee.count(),
+        prisma.monitor.count(),
+        prisma.burc.count(),
     ])
 
     const sources = [
-        { name: 'RSS Feed URL', value: rssFeedCount },
         { name: 'URL', value: urlCount },
-        { name: 'Fonti Europee', value: fontiEuropeeCount },
-        { name: 'RSS Europee', value: rssEuropeeCount },
+        { name: 'Monitor', value: monitorCount },
+        { name: 'Burc', value: burcCount },
     ]
 
     // 3. Word Cloud Data

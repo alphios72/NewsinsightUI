@@ -1,4 +1,4 @@
-import { ALL_TABLES } from '@/lib/tables'
+import { getDatabaseTables } from '@/lib/db-utils'
 import { prisma } from '@/lib/prisma'
 import { updatePermission } from './actions'
 
@@ -19,7 +19,8 @@ export default async function PermissionsPage() {
         where: { role: 'CONFIGURATOR' },
     })
 
-
+    const dbTables = await getDatabaseTables()
+    const allTables = dbTables.map(name => ({ name, label: name }))
 
     return (
         <div>
@@ -27,7 +28,7 @@ export default async function PermissionsPage() {
             <p className="subtitle">Manage access for <strong>CONFIGURATOR</strong> role.</p>
 
             <div className="card">
-                <PermissionsTable initialPermissions={permissions} allTables={ALL_TABLES} />
+                <PermissionsTable initialPermissions={permissions} allTables={allTables} />
             </div>
 
             <style>{`

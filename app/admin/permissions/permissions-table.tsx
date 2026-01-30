@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { updatePermission } from './actions'
-import { TableConfig } from '@/lib/tables'
 
 type Permission = {
     tableName: string
@@ -10,12 +9,17 @@ type Permission = {
     canEdit: boolean
 }
 
+type TableItem = {
+    name: string
+    label: string
+}
+
 export default function PermissionsTable({
     initialPermissions,
     allTables
 }: {
     initialPermissions: any[],
-    allTables: TableConfig[]
+    allTables: TableItem[]
 }) {
     const [loading, setLoading] = useState<string | null>(null)
 

@@ -1,19 +1,22 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
-import { updateRow } from './actions'
+import { useState, useMemo, useEffect } from 'react'
+import { updateRow, deleteRecord } from './actions'
 import styles from './TableView.module.css'
+import AddRecordModal from './AddRecordModal'
+import { ColumnInfo } from '@/lib/db-utils'
 
 interface TableViewProps {
     tableName: string
     initialData: any[]
     canEdit: boolean
+    columns: ColumnInfo[]
 }
 
 type SortConfig = { key: string; direction: 'asc' | 'desc' } | null
 type Filters = { [key: string]: Set<string> }
 
-export default function TableView({ tableName, initialData, canEdit }: TableViewProps) {
+export default function TableView({ tableName, initialData, canEdit, columns: schemaColumns }: TableViewProps) {
     const [data, setData] = useState(initialData)
     const [editingId, setEditingId] = useState<number | null>(null)
     const [editForm, setEditForm] = useState<any>({})
@@ -33,11 +36,16 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
         setCurrentPage(1)
     }, [filters, sortConfig])
 
-    if (!data || data.length === 0) {
-        return <div className="no-data">No data available in this table.</div>
-    }
-
-    const columns = Object.keys(data[0])
+    // Use schema columns to determine order and keys
+    const columns = useMemo(() => {
+        if (schemaColumns && schemaColumns.length > 0) {
+            return schemaColumns.map(c => c.column_name)
+        }
+        if (data && data.length > 0) {
+            return Object.keys(data[0])
+        }
+        return []
+    }, [schemaColumns, data])
 
     // Derived Data: Filtered & Sorted
     const processedData = useMemo(() => {
@@ -148,14 +156,34 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
         return Array.from(values).sort()
     }
 
+    // State for Add Modal
+    const [showAddModal, setShowAddModal] = useState(false)
+
+    // Helper to check column type
+    const isBooleanCol = (colName: string) => {
+        const colDef = schemaColumns.find(c => c.column_name === colName)
+        return colDef?.data_type === 'boolean'
+    }
+
     return (
         <div className={styles.tableContainer}>
-            <div className={styles.tableHeader}>
-                <div className={styles.resultCount}>
-                    Showing {paginatedData.length} of {processedData.length} records
-                    {processedData.length !== data.length && ` (filtered from ${data.length})`}
+            <div className={styles.header}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h2 className={styles.title}>{tableName}</h2>
+                    <button
+                        className={styles.btnPrimary}
+                        onClick={() => setShowAddModal(true)}
+                        style={{ padding: '0.5rem 1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                        + Add Record
+                    </button>
                 </div>
-                {/* Could add export button here */}
+                <div className={styles.tableHeader}>
+                    <div className={styles.resultCount}>
+                        Showing {paginatedData.length} of {processedData.length} records
+                        {processedData.length !== data.length && ` (filtered from ${data.length})`}
+                    </div>
+                </div>
             </div>
 
             <div className={styles.tableWrapper}>
@@ -253,7 +281,7 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
                                     {columns.map(col => (
                                         <td key={col} className={styles.td}>
                                             {isEditing && col !== 'id' ? (
-                                                typeof row[col] === 'boolean' ? (
+                                                isBooleanCol(col) ? (
                                                     <input
                                                         type="checkbox"
                                                         checked={editForm[col] || false}
@@ -282,7 +310,28 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
                                                     <button onClick={cancelEdit} className={styles.cancelBtn}>Can</button>
                                                 </div>
                                             ) : (
-                                                <button onClick={() => startEdit(row)} className={styles.editBtn}>Edit</button>
+                                                <div className={styles.btnGroup}>
+                                                    <button onClick={() => startEdit(row)} className={styles.editBtn}>Edit</button>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (window.confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
+                                                                deleteRecord(tableName, row.id).then(res => {
+                                                                    if (res.success) {
+                                                                        // Optimistic update or just refresh
+                                                                        setData(prev => prev.filter(r => r.id !== row.id))
+                                                                        // window.location.reload() // Optional, but local update is smoother
+                                                                    } else {
+                                                                        alert('Failed to delete: ' + res.error)
+                                                                    }
+                                                                })
+                                                            }
+                                                        }}
+                                                        className={styles.deleteBtn}
+                                                        style={{ marginLeft: '0.5rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '0.25rem 0.5rem', cursor: 'pointer' }}
+                                                    >
+                                                        Del
+                                                    </button>
+                                                </div>
                                             )}
                                         </td>
                                     )}
@@ -291,6 +340,13 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
                         })}
                     </tbody>
                 </table>
+                {processedData.length === 0 && (
+                    <div className={styles.emptyState}>
+                        <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
+                            No records found. Click "Add Record" to create one.
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Pagination Controls */}
@@ -314,6 +370,18 @@ export default function TableView({ tableName, initialData, canEdit }: TableView
                         </button>
                     </div>
                 </div>
+            )}
+
+            {/* Modal */}
+            {showAddModal && (
+                <AddRecordModal
+                    tableName={tableName}
+                    columns={schemaColumns}
+                    onClose={() => setShowAddModal(false)}
+                    onSuccess={() => {
+                        window.location.reload()
+                    }}
+                />
             )}
         </div>
     )

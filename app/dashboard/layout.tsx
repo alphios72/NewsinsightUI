@@ -1,13 +1,21 @@
 import Link from 'next/link'
 import { logout } from '@/app/login/actions'
 import { headers } from 'next/headers'
-import { ALL_TABLES, TableConfig } from '@/lib/tables'
+import { getDatabaseTables } from '@/lib/db-utils'
 import { prisma } from '@/lib/prisma'
 import Sidebar from './Sidebar'
 
-async function getSidebarTables(role: string): Promise<TableConfig[]> {
+interface NavTable {
+    name: string
+    label: string
+}
+
+async function getSidebarTables(role: string): Promise<NavTable[]> {
+    const rawTables = await getDatabaseTables()
+    const allTables = rawTables.map(name => ({ name, label: name }))
+
     if (role === 'ADMIN') {
-        return ALL_TABLES
+        return allTables
     }
 
     // Fetch permissions for CONFIGURATOR
@@ -16,7 +24,7 @@ async function getSidebarTables(role: string): Promise<TableConfig[]> {
     })
 
     const allowedTableNames = new Set(permissions.map((p: { tableName: string }) => p.tableName))
-    return ALL_TABLES.filter((t) => allowedTableNames.has(t.name))
+    return allTables.filter((t) => allowedTableNames.has(t.name))
 }
 
 export default async function DashboardLayout({

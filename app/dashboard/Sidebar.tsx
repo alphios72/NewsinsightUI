@@ -4,10 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
-import { TableConfig } from '@/lib/tables';
+interface TableItem {
+    name: string;
+    label: string;
+}
 
 interface SidebarProps {
-    tables: TableConfig[];
+    tables: TableItem[];
     role: string;
     username: string;
     logoutAction: () => Promise<void>;

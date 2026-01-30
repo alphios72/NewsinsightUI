@@ -1,35 +1,38 @@
 import { logout } from '@/app/login/actions'
 import { headers } from 'next/headers'
-import { ALL_TABLES } from '@/lib/tables'
+import { getDatabaseTables } from '@/lib/db-utils'
 import { prisma } from '@/lib/prisma'
 import Sidebar from '@/app/dashboard/Sidebar'
 
 // Admin layout reuses dashboard structure but with specific sidebar variant
 export default async function AdminLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode
 }) {
-    const headersList = await headers()
-    const role = headersList.get('x-user-role') || 'CONFIGURATOR'
+  const headersList = await headers()
+  const role = headersList.get('x-user-role') || 'CONFIGURATOR'
 
-    // Ensure only Admin accesses this (Middleware does check, but visual check nice)
-    // If not admin, maybe redirect? Assuming middleware handles it.
+  // Ensure only Admin accesses this (Middleware does check, but visual check nice)
+  // If not admin, maybe redirect? Assuming middleware handles it.
 
-    const username = (await prisma.user.findFirst({ where: { role: 'ADMIN' } }))?.username || 'Admin'
+  const username = (await prisma.user.findFirst({ where: { role: 'ADMIN' } }))?.username || 'Admin'
 
-    return (
-        <div className="layout">
-            <Sidebar
-                tables={ALL_TABLES}
-                role={role}
-                username={username}
-                logoutAction={logout}
-                variant="admin"
-            />
-            <main className="content">{children}</main>
+  const dbTables = await getDatabaseTables()
+  const allTables = dbTables.map(name => ({ name, label: name }))
 
-            <style>{`
+  return (
+    <div className="layout">
+      <Sidebar
+        tables={allTables}
+        role={role}
+        username={username}
+        logoutAction={logout}
+        variant="admin"
+      />
+      <main className="content">{children}</main>
+
+      <style>{`
         .layout {
           display: flex;
           height: 100vh;
@@ -42,6 +45,6 @@ export default async function AdminLayout({
           padding: 2rem;
         }
       `}</style>
-        </div>
-    )
+    </div>
+  )
 }

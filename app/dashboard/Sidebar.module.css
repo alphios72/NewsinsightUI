@@ -77,6 +77,28 @@
     text-transform: uppercase;
 }
 
+.nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+}
+
+.nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nav::-webkit-scrollbar-thumb {
+    background-color: #475569;
+    border-radius: 2px;
+}
+
 .nav ul {
     list-style: none;
     padding: 0;

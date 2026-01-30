@@ -36,12 +36,13 @@ model TablePermission {
 
 // Business Tables (from Diagram)
 
-model RssFeedUrl {
-  id           Int     @id @default(autoincrement()) @map("ID")
-  website      String?
-  rss_feed_url String? // "rss_feed_url" in image
+model Monitor {
+  id      Int     @id @default(autoincrement())
+  website String?
+  url     String?
+  hash    String?
 
-  @@map("rss_feed_url")
+  @@map("monitor")
 }
 
 model DbBurc {
@@ -73,41 +74,21 @@ model Logs {
   @@map("logs")
 }
 
-model FontiEuropee {
-  id            Int     @id @default(autoincrement()) @map("ID")
-  website       String?
-  url           String?
-  domain        String?
-  css_selector  String? @map("CSS_selector")
-  return_value  String?
-  attribute     String?
 
-  @@map("fonti_europee")
-}
 
 model RssDb {
   id           Int       @id @default(autoincrement()) @map("ID")
-  article_url  String?
-  summarized   String?
-  summary      String?
-  website      String?
-  fetched_at   DateTime?
-  publish_date DateTime?
+  article_url  String?   @db.Text
+  summarized   String?   @db.VarChar(10)
+  summary      String?   @db.Text
+  website      String?   @db.VarChar(255)
+  fetched_at   DateTime? @db.Timestamptz(6)
+  publish_date DateTime? @db.Date
 
   @@map("rss_db")
 }
 
-model RssEuropee {
-  id            Int     @id @default(autoincrement()) @map("ID")
-  website       String?
-  url           String?
-  domain        String?
-  css_selector  String? @map("CSS_selector")
-  return_value  String?
-  attribute     String?
 
-  @@map("rss_europee")
-}
 
 model ArticleDb {
   id                 Int       @id @default(autoincrement())
@@ -138,7 +119,7 @@ model Burc {
 model DbEuropee {
   id                 Int       @id @default(autoincrement()) @map("ID")
   article_url        String?
-  summarized         Boolean? // Checkbox icon
+  summarized         String? // Changed from Boolean to String
   summary            String?
   fetched_at         DateTime?
   title              String?
