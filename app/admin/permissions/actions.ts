@@ -39,3 +39,17 @@ export async function updatePermission(tableName: string, type: 'view' | 'edit',
         throw new Error('Failed to update permission')
     }
 }
+
+import { saveTableLabel } from '@/lib/ui-config'
+
+export async function updateTableLabelAction(tableName: string, label: string) {
+    try {
+        await saveTableLabel(tableName, label)
+        revalidatePath('/admin/permissions')
+        revalidatePath('/dashboard') // Update sidebar
+        revalidatePath('/admin') // Update admin sidebar
+    } catch (error) {
+        console.error('Failed to update label', error)
+        throw new Error('Failed to update label')
+    }
+}

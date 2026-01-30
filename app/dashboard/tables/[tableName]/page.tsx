@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { headers } from 'next/headers'
 import TableView from './table-view'
 import { getDatabaseTables, getTableData, getTableColumns } from '@/lib/db-utils'
+import { getTableLabels, getLabelForTable } from '@/lib/ui-config'
 
 // Force dynamic rendering as we rely on headers involved in auth/permissions that might change
 export const dynamic = 'force-dynamic'
@@ -54,9 +55,13 @@ export default async function TablePage({ params }: { params: Promise<{ tableNam
     // Fetch columns dynamically
     const columns = await getTableColumns(tableName)
 
+    // Fetch Custom Label
+    const labels = await getTableLabels()
+    const displayLabel = getLabelForTable(labels, tableName)
+
     return (
         <div>
-            <h1 className="title">{tableName}</h1>
+            <h1 className="title">{displayLabel}</h1>
             <TableView
                 tableName={tableName}
                 initialData={data}

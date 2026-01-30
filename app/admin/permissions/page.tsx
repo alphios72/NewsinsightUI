@@ -1,6 +1,6 @@
 import { getDatabaseTables } from '@/lib/db-utils'
 import { prisma } from '@/lib/prisma'
-import { updatePermission } from './actions'
+import { getTableLabels, getLabelForTable } from '@/lib/ui-config'
 
 // Client component for interaction could be separated, but for simplicity using Server Component with small Client interaction parts if needed, 
 // or simpler: Use "use client" for the whole table if interactivity is high. 
@@ -20,7 +20,11 @@ export default async function PermissionsPage() {
     })
 
     const dbTables = await getDatabaseTables()
-    const allTables = dbTables.map(name => ({ name, label: name }))
+    const labels = await getTableLabels()
+    const allTables = dbTables.map(name => ({
+        name,
+        label: getLabelForTable(labels, name)
+    }))
 
     return (
         <div>

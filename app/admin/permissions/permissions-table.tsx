@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { updatePermission } from './actions'
+import { useState, useEffect } from 'react'
+import { updatePermission, updateTableLabelAction } from './actions'
 
 type Permission = {
     tableName: string
@@ -22,6 +22,13 @@ export default function PermissionsTable({
     allTables: TableItem[]
 }) {
     const [loading, setLoading] = useState<string | null>(null)
+    const [labels, setLabels] = useState<Record<string, string>>({})
+
+    useEffect(() => {
+        const initialLabels: Record<string, string> = {}
+        allTables.forEach(t => initialLabels[t.name] = t.label)
+        setLabels(initialLabels)
+    }, [allTables])
 
     const getPerm = (tableName: string) =>
         initialPermissions.find(p => p.tableName === tableName) || { canView: false, canEdit: false }
@@ -35,11 +42,30 @@ export default function PermissionsTable({
         }
     }
 
+    const handleLabelChange = (tableName: string, value: string) => {
+        setLabels(prev => ({ ...prev, [tableName]: value }))
+    }
+
+    const saveLabel = async (tableName: string) => {
+        const newLabel = labels[tableName]
+        if (!newLabel || newLabel === tableName) return // Optional: don't save if same? Or save to be explicit.
+
+        // Optimistic check? 
+        // Just save.
+        setLoading(`${tableName}-label`)
+        try {
+            await updateTableLabelAction(tableName, newLabel)
+        } finally {
+            setLoading(null)
+        }
+    }
+
     return (
         <table className="permissions-table">
             <thead>
                 <tr>
                     <th>Table Name</th>
+                    <th>Display Name</th>
                     <th className="center">View Access</th>
                     <th className="center">Edit Access</th>
                 </tr>
@@ -49,7 +75,22 @@ export default function PermissionsTable({
                     const perm = getPerm(table.name)
                     return (
                         <tr key={table.name}>
-                            <td>{table.label} <span className="mono">({table.name})</span></td>
+                            <td className="mono">{table.name}</td>
+                            <td>
+                                <input
+                                    type="text"
+                                    value={labels[table.name] || table.label}
+                                    onChange={(e) => handleLabelChange(table.name, e.target.value)}
+                                    onBlur={() => saveLabel(table.name)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.currentTarget.blur()
+                                        }
+                                    }}
+                                    className="label-input"
+                                    placeholder="Enter generic label..."
+                                />
+                            </td>
                             <td className="center">
                                 <input
                                     type="checkbox"
@@ -94,8 +135,19 @@ export default function PermissionsTable({
           font-size: 0.9em;
         }
         input[type="checkbox"] {
-          transform: scale(1.2);
-          cursor: pointer;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .label-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+        .label-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
       `}</style>
         </table>

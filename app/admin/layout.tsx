@@ -1,6 +1,7 @@
 import { logout } from '@/app/login/actions'
 import { headers } from 'next/headers'
 import { getDatabaseTables } from '@/lib/db-utils'
+import { getTableLabels, getLabelForTable } from '@/lib/ui-config'
 import { prisma } from '@/lib/prisma'
 import Sidebar from '@/app/dashboard/Sidebar'
 
@@ -19,7 +20,11 @@ export default async function AdminLayout({
   const username = (await prisma.user.findFirst({ where: { role: 'ADMIN' } }))?.username || 'Admin'
 
   const dbTables = await getDatabaseTables()
-  const allTables = dbTables.map(name => ({ name, label: name }))
+  const labels = await getTableLabels()
+  const allTables = dbTables.map(name => ({
+    name,
+    label: getLabelForTable(labels, name)
+  }))
 
   return (
     <div className="layout">
