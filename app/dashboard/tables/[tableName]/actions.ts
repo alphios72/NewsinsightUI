@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import { getDatabaseTables } from '@/lib/db-utils'
+import { getDatabaseTables, getTableColumns } from '@/lib/db-utils'
 
 async function validateTable(tableName: string) {
     const validTables = await getDatabaseTables()
@@ -15,16 +15,22 @@ export async function createRecord(tableName: string, data: Record<string, any>)
     try {
         await validateTable(tableName)
 
-        const keys = Object.keys(data)
-        const values = Object.values(data)
+        const validColumns = (await getTableColumns(tableName)).map(c => c.column_name)
+
+        // Filter data to strictly include valid columns
+        const filteredData = Object.entries(data).reduce((acc, [k, v]) => {
+            if (validColumns.includes(k)) {
+                acc[k] = v
+            }
+            return acc
+        }, {} as Record<string, any>)
+
+        const keys = Object.keys(filteredData)
+        const values = Object.values(filteredData)
 
         if (keys.length === 0) {
-            return { error: 'No data provided' }
+            return { error: 'No valid data provided' }
         }
-
-        // Check if ID is provided, if not and we need it, we might need to handle it.
-        // But for raw SQL INSERT without ID, if the column is SERIAL/AUTOINCREMENT, it works fine.
-        // If the user tries to provide ID manually, keys/values will include it.
 
         // Construct query: INSERT INTO "tableName" ("col1", "col2") VALUES ($1, $2)
         const columns = keys.map(k => `"${k}"`).join(', ')
@@ -46,8 +52,18 @@ export async function updateRow(tableName: string, id: number, data: any) {
     try {
         await validateTable(tableName)
 
-        const keys = Object.keys(data)
-        const values = Object.values(data)
+        const validColumns = (await getTableColumns(tableName)).map(c => c.column_name)
+
+        // Filter data to strictly include valid columns
+        const filteredData = Object.entries(data).reduce((acc, [k, v]) => {
+            if (validColumns.includes(k)) {
+                acc[k] = v
+            }
+            return acc
+        }, {} as Record<string, any>)
+
+        const keys = Object.keys(filteredData)
+        const values = Object.values(filteredData)
 
         if (keys.length === 0) {
             return { success: true }

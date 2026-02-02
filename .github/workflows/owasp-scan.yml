@@ -1,0 +1,77 @@
+name: OWASP ZAP Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Scan the application
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: newsinsight_db
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Database environment
+        run: |
+          echo "DATABASE_URL=postgresql://user:password@localhost:5432/newsinsight_db" >> .env
+          echo "NEXTAUTH_SECRET=changeme_for_testing_only" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+
+      - name: Push Database Schema
+        run: npx prisma db push
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Start Application (Background)
+        run: |
+          npm start &
+          npx wait-on http://localhost:3000
+
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:3000'
+          # Fail only on High severity issues to avoid blocking build on minor things initially
+          fail_action: false 
+          allow_issue_writing: false
+
+      - name: Upload ZAP Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
