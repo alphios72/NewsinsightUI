@@ -58,6 +58,11 @@ jobs:
           npm start &
           npx wait-on http://localhost:3000
 
+      - name: Prepare ZAP Permissions
+        run: |
+          touch zap.yaml
+          chmod 666 zap.yaml
+
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
@@ -65,6 +70,7 @@ jobs:
           # Fail only on High severity issues to avoid blocking build on minor things initially
           fail_action: false 
           allow_issue_writing: false
+          artifact_name: 'zap-scan-raw'
 
       - name: Upload ZAP Report
         if: always()
