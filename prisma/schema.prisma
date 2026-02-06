@@ -37,7 +37,7 @@ model TablePermission {
 // Business Tables (from Diagram)
 
 model Monitor {
-  id      Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement()) @map("ID")
   website String?
   url     String?
   hash    String?
@@ -46,7 +46,7 @@ model Monitor {
 }
 
 model DbBurc {
-  id          Int       @id @default(autoincrement())
+  id          Int       @id @default(autoincrement()) @map("ID")
   article_url String?
   fetched_at  DateTime?
   stato       String?
@@ -91,7 +91,7 @@ model RssDb {
 
 
 model ArticleDb {
-  id                 Int       @id @default(autoincrement())
+  id                 Int       @id @default(autoincrement()) @map("ID")
   article_url        String?
   summarized         String?
   summary            String?
@@ -104,7 +104,7 @@ model ArticleDb {
 }
 
 model Burc {
-  id                        Int     @id @default(autoincrement())
+  id                        Int     @id @default(autoincrement()) @map("ID")
   website                   String?
   url                       String?
   fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scrivilo sotto)")
