@@ -7,12 +7,12 @@ const SECRET_KEY = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || 'secr
 export async function middleware(request: NextRequest) {
     const session = request.cookies.get('session')?.value
 
-    // Generate Nonce for CSP
+    // Content Security Policy
     const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
     const cspHeader = `
         default-src 'self';
         script-src 'self' 'nonce-${nonce}' 'strict-dynamic';
-        style-src 'self' 'nonce-${nonce}';
+        style-src 'self' 'unsafe-inline';
         img-src 'self' data:;
         font-src 'self';
         object-src 'none';

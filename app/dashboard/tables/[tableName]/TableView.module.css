@@ -1,12 +1,15 @@
 .tableContainer {
-    overflow-x: auto;
+    /* overflow-x: auto; */
     background: white;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     position: relative;
-    min-height: 400px;
+    height: calc(100vh - 140px);
+    /* Fixed height so it fits in viewport */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    /* Main container hides overflow, wrapper handles it */
 }
 
 .tableHeader {
@@ -22,8 +25,10 @@
     font-size: 0.875rem;
 }
 
+
 .tableWrapper {
-    overflow-x: auto;
+    overflow: auto;
+    /* Both X and Y scrolling */
     flex: 1;
 }
 
@@ -49,12 +54,17 @@
     /* Vertical separator */
     text-align: left;
     font-size: 0.875rem;
-    position: relative;
+    position: sticky;
+    /* STICKY HEADER */
+    top: 0;
+    z-index: 10;
     user-select: none;
 }
 
 .th:last-child {
     border-right: none;
+    z-index: 11;
+    /* Ensure actions column header stays on top if needed, though usually same z-index is fine */
 }
 
 .headerContent {
