@@ -69,11 +69,11 @@ export async function updateRow(tableName: string, id: number, data: any) {
             return { success: true }
         }
 
-        // Construct query: UPDATE "tableName" SET "col1" = $1, "col2" = $2 WHERE "id" = $3
+        // Construct query: UPDATE "tableName" SET "col1" = $1, "col2" = $2 WHERE "ID" = $3
         const setClause = keys.map((k, i) => `"${k}" = $${i + 1}`).join(', ')
 
         // Add ID as the last parameter
-        const query = `UPDATE "${tableName}" SET ${setClause} WHERE "id" = $${keys.length + 1}`
+        const query = `UPDATE "${tableName}" SET ${setClause} WHERE "ID" = $${keys.length + 1}`
 
         await prisma.$queryRawUnsafe(query, ...values, id)
 
@@ -89,7 +89,7 @@ export async function deleteRecord(tableName: string, id: number) {
     try {
         await validateTable(tableName)
 
-        const query = `DELETE FROM "${tableName}" WHERE "id" = $1`
+        const query = `DELETE FROM "${tableName}" WHERE "ID" = $1`
         await prisma.$queryRawUnsafe(query, id)
 
         revalidatePath('/dashboard/tables')

@@ -95,7 +95,7 @@ export default function TableView({ tableName, initialData, canEdit, columns: sc
 
     // Handlers
     const startEdit = (row: any) => {
-        setEditingId(row.id)
+        setEditingId(row.ID)
         setEditForm({ ...row })
     }
 
@@ -110,7 +110,7 @@ export default function TableView({ tableName, initialData, canEdit, columns: sc
 
         // Update local state optimistic logic or refresh
         // For simplicity, update local data array
-        setData(prev => prev.map(row => row.id === editingId ? { ...editForm } : row))
+        setData(prev => prev.map(row => row.ID === editingId ? { ...editForm } : row))
         setEditingId(null)
     }
 
@@ -275,12 +275,12 @@ export default function TableView({ tableName, initialData, canEdit, columns: sc
                     </thead>
                     <tbody>
                         {paginatedData.map((row) => {
-                            const isEditing = editingId === row.id
+                            const isEditing = editingId === row.ID
                             return (
-                                <tr key={row.id} className={`${styles.row} ${isEditing ? styles.editing : ''}`}>
+                                <tr key={row.ID} className={`${styles.row} ${isEditing ? styles.editing : ''}`}>
                                     {columns.map(col => (
                                         <td key={col} className={styles.td}>
-                                            {isEditing && col !== 'id' ? (
+                                            {isEditing && col !== 'ID' ? (
                                                 isBooleanCol(col) ? (
                                                     <input
                                                         type="checkbox"
@@ -315,10 +315,10 @@ export default function TableView({ tableName, initialData, canEdit, columns: sc
                                                     <button
                                                         onClick={() => {
                                                             if (window.confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
-                                                                deleteRecord(tableName, row.id).then(res => {
+                                                                deleteRecord(tableName, row.ID).then(res => {
                                                                     if (res.success) {
                                                                         // Optimistic update or just refresh
-                                                                        setData(prev => prev.filter(r => r.id !== row.id))
+                                                                        setData(prev => prev.filter(r => r.ID !== row.ID))
                                                                         // window.location.reload() // Optional, but local update is smoother
                                                                     } else {
                                                                         alert('Failed to delete: ' + res.error)
