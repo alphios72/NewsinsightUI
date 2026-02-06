@@ -10,6 +10,8 @@ datasource db {
 
 // System Tables
 
+// System Tables
+
 enum Role {
   ADMIN
   CONFIGURATOR
@@ -37,7 +39,7 @@ model TablePermission {
 // Business Tables (from Diagram)
 
 model Monitor {
-  id      Int     @id @default(autoincrement())
+  ID      Int     @id @default(autoincrement())
   website String?
   url     String?
   hash    String?
@@ -46,7 +48,7 @@ model Monitor {
 }
 
 model DbBurc {
-  id          Int       @id @default(autoincrement())
+  ID          Int       @id @default(autoincrement())
   article_url String?
   fetched_at  DateTime?
   stato       String?
@@ -55,7 +57,7 @@ model DbBurc {
 }
 
 model RelevantOrNot {
-  id          Int     @id @default(autoincrement()) @map("ID")
+  ID          Int     @id @default(autoincrement()) @map("ID")
   category    String?
   description String?
   relevant    Int? // 123 icon in image
@@ -64,7 +66,7 @@ model RelevantOrNot {
 }
 
 model Logs {
-  id          Int       @id @default(autoincrement()) @map("ID")
+  ID          Int       @id @default(autoincrement()) @map("ID")
   timestamp   DateTime?
   level_error String?   @map("level error")
   node        String?
@@ -77,7 +79,7 @@ model Logs {
 
 
 model RssDb {
-  id           Int       @id @default(autoincrement()) @map("ID")
+  ID           Int       @id @default(autoincrement()) @map("ID")
   article_url  String?   @db.Text
   summarized   String?   @db.VarChar(10)
   summary      String?   @db.Text
@@ -91,7 +93,7 @@ model RssDb {
 
 
 model ArticleDb {
-  id                 Int       @id @default(autoincrement())
+  ID                 Int       @id @default(autoincrement())
   article_url        String?
   summarized         String?
   summary            String?
@@ -104,7 +106,7 @@ model ArticleDb {
 }
 
 model Burc {
-  id                        Int     @id @default(autoincrement())
+  ID                        Int     @id @default(autoincrement())
   website                   String?
   url                       String?
   fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scrivilo sotto)")
@@ -117,7 +119,7 @@ model Burc {
 }
 
 model DbEuropee {
-  id                 Int       @id @default(autoincrement()) @map("ID")
+  ID                 Int       @id @default(autoincrement()) @map("ID")
   article_url        String?
   summarized         String? // Changed from Boolean to String
   summary            String?
@@ -131,7 +133,7 @@ model DbEuropee {
 }
 
 model Url {
-  id                        Int     @id @default(autoincrement()) @map("ID")
+  ID                        Int     @id @default(autoincrement()) @map("ID")
   website                   String?
   url                       String?
   fonte_primaria_secondaria String? @map("fonte primaria o secondaria? (scriverlo sotto)")
